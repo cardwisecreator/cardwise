@@ -81,6 +81,7 @@ model Lead {
  name String
  email String @unique
  phone String
+ passwordHash String?
  marketingConsent Boolean @default(false)
  createdAt DateTime @default(now())
 }
