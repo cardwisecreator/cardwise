@@ -3,6 +3,7 @@
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "scripts": {
+    "prebuild": "pnpm db:push && pnpm db:seed",
     "dev": "turbo dev",
     "build": "turbo build",
     "lint": "turbo lint",
