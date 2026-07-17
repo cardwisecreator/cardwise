@@ -1,0 +1,1 @@
+import {NextRequest}from"next/server";export function adminAllowed(req:NextRequest){const auth=req.headers.get("authorization");const expected="Basic "+Buffer.from(`${process.env.ADMIN_EMAIL}:${process.env.ADMIN_PASSWORD}`).toString("base64");return Boolean(process.env.ADMIN_EMAIL&&process.env.ADMIN_PASSWORD&&auth===expected)}

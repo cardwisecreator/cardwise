@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+enum RewardType {
+ CASHBACK
+ MILES
+ POINTS
+}
+enum Channel {
+ ONLINE
+ OFFLINE
+ ANY
+}
+enum PublishStatus {
+ DRAFT
+ REVIEW
+ PUBLISHED
+ ARCHIVED
+}
+model Card {
+ id String @id @default(cuid())
+ slug String @unique
+ name String
+ bank String
+ rewardType RewardType
+ earnRate Float
+ annualFee Float @default(0)
+ minimumSpend Float @default(0)
+ monthlyCap Float?
+ eligibleCategories String[]
+ channel Channel @default(ANY)
+ exclusions String[]
+ sourceUrl String
+ lastUpdated DateTime @default(now())
+ status PublishStatus @default(DRAFT)
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ versions CardVersion[]
+}
+model Offer {
+ id String @id @default(cuid())
+ merchant String
+ slug String @unique
+ title String
+ description String?
+ discountPct Float?
+ cashbackPct Float?
+ minSpend Float?
+ validFrom DateTime
+ validTo DateTime
+ sourceUrl String
+ status PublishStatus @default(DRAFT)
+ cardIds String[]
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+}
+model CardVersion {
+ id String @id @default(cuid())
+ cardId String
+ card Card @relation(fields:[cardId], references:[id], onDelete:Cascade)
+ snapshot Json
+ changedBy String
+ createdAt DateTime @default(now())
+}
+model ImportJob {
+ id String @id @default(cuid())
+ sourceUrl String
+ sourceName String
+ payload Json?
+ status PublishStatus @default(REVIEW)
+ createdAt DateTime @default(now())
+ reviewedAt DateTime?
+ reviewedBy String?
+}
+model Lead {
+ id String @id @default(cuid())
+ name String
+ email String @unique
+ phone String
+ marketingConsent Boolean @default(false)
+ createdAt DateTime @default(now())
+}
+model Article {
+ id String @id @default(cuid())
+ slug String @unique
+ title String
+ excerpt String
+ body String
+ status PublishStatus @default(DRAFT)
+ updatedAt DateTime @updatedAt
+ createdAt DateTime @default(now())
+}

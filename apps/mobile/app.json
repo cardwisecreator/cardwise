@@ -1,0 +1,1 @@
+{ "expo": { "name":"PerkLah", "slug":"perklah", "scheme":"perklah", "version":"1.0.0", "orientation":"portrait", "userInterfaceStyle":"automatic", "ios":{"bundleIdentifier":"sg.perklah.app"}, "android":{"package":"sg.perklah.app"}, "plugins":["expo-router"] } }

@@ -1,0 +1,13 @@
+{
+  "name": "perklah-sg",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "db:push": "pnpm --filter @perklah/db prisma db push",
+    "db:seed": "pnpm --filter @perklah/db prisma db seed"
+  },
+  "devDependencies": { "turbo": "^2.3.3", "typescript": "^5.7.2" }
+}
