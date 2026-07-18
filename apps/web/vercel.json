@@ -1,0 +1,4 @@
+{
+  "buildCommand": "pnpm --dir ../.. db:push && pnpm --dir ../.. db:seed && pnpm run build",
+  "crons": [{ "path": "/api/admin/imports/sync", "schedule": "0 3 * * 1" }]
+}
