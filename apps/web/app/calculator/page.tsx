@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import type { Recommendation } from "@perklah/rewards";
+import { CardVisual } from "@/components/card-visual";
 
 type ReviewCard = { id: string; name: string; bank: string; sourceUrl: string };
 
@@ -69,8 +70,8 @@ export default function Calculator() {
     </form>
     {message && <p className="notice">{message}</p>}
     <section className="section">
-      {results.length === 0 ? <p className="muted">Enter your transaction and monthly spend to compare every reviewed card.</p> : results.map((r, i) => <article key={r.card.id} className="card result" style={{ marginBottom: 12, opacity: r.eligible ? 1 : .7 }}><div className="eyebrow">#{i + 1} - {r.eligible ? "Eligible now" : "Not unlocked / not eligible"}</div><h3>{r.card.name} {owned.includes(r.card.id) && <span className="tag">You have this card</span>}</h3><div className="stats"><span className="stat">{r.reward}</span><span className="stat">Value S${r.value.toFixed(2)}</span><span className="stat">Min monthly spend S${r.card.minimumSpend}</span>{r.card.monthlyCap && <span className="stat">Cap S${r.card.monthlyCap}</span>}</div><label className="muted"><input checked={owned.includes(r.card.id)} onChange={() => toggle(r.card.id)} type="checkbox"/> I have this card</label>{r.notes.map(n => <p className="muted" key={n}>{n}</p>)}</article>)}
+      {results.length === 0 ? <p className="muted">Enter your transaction and monthly spend to compare every reviewed card.</p> : results.map((r, i) => <article key={r.card.id} className="card result" style={{ marginBottom: 12, opacity: r.eligible ? 1 : .7 }}><CardVisual bank={r.card.bank} name={r.card.name}/><div className="eyebrow">#{i + 1} - {r.eligible ? "Eligible now" : "Not unlocked / not eligible"}</div><h3>{r.card.name} {owned.includes(r.card.id) && <span className="tag">You have this card</span>}</h3><div className="stats"><span className="stat">{r.reward}</span><span className="stat">Value S${r.value.toFixed(2)}</span><span className="stat">Min monthly spend S${r.card.minimumSpend}</span>{r.card.monthlyCap && <span className="stat">Cap S${r.card.monthlyCap}</span>}</div><label className="muted"><input checked={owned.includes(r.card.id)} onChange={() => toggle(r.card.id)} type="checkbox"/> I have this card</label>{r.notes.map(n => <p className="muted" key={n}>{n}</p>)}</article>)}
     </section>
-    {underReview.length > 0 && <section className="section"><div className="eyebrow">Market coverage</div><h2>{underReview.length} additional cards being verified</h2><p className="muted">These cards are tracked from official issuer pages. They are excluded from benefit calculations until their reward rates, caps and exclusions are reviewed.</p><div className="grid">{underReview.map(card => <a className="card" key={card.id} href={card.sourceUrl} target="_blank" rel="noreferrer"><div className="tag">Rules under review</div><h3>{card.name}</h3><p className="muted">{card.bank}</p><span className="stat">Official source -&gt;</span></a>)}</div></section>}
+    {underReview.length > 0 && <section className="section"><div className="eyebrow">Market coverage</div><h2>{underReview.length} additional cards being verified</h2><p className="muted">These cards are tracked from official issuer pages. They are excluded from benefit calculations until their reward rates, caps and exclusions are reviewed.</p><div className="grid">{underReview.map(card => <a className="card" key={card.id} href={card.sourceUrl} target="_blank" rel="noreferrer"><CardVisual bank={card.bank} name={card.name}/><div className="tag">Rules under review</div><h3>{card.name}</h3><p className="muted">{card.bank}</p><span className="stat">Official source -&gt;</span></a>)}</div></section>}
   </main>;
 }
