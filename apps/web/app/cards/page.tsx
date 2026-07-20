@@ -4,10 +4,13 @@ import { db } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 export default async function Cards() {
-  const [cards, issuers] = await Promise.all([
-    db.card.findMany({ where: { status: "PUBLISHED" }, orderBy: { updatedAt: "desc" } }),
+  const [allCards, issuers] = await Promise.all([
+    db.card.findMany({ where: { status: { in: ["PUBLISHED", "REVIEW"] } }, orderBy: { updatedAt: "desc" } }),
     db.issuer.findMany({ where: { active: true }, orderBy: { name: "asc" } }),
   ]);
+
+  const cards = allCards.filter(card => card.status === "PUBLISHED");
+  const reviewCards = allCards.filter(card => card.status === "REVIEW");
 
   return <main className="wrap section">
     <div className="eyebrow">Singapore market directory</div>
@@ -39,5 +42,6 @@ export default async function Cards() {
         <div className="stats"><span className="stat">Min spend S${card.minimumSpend}</span>{card.monthlyCap && <span className="stat">Cap S${card.monthlyCap}</span>}</div>
       </Link>)}</div>
     </section>
+    {reviewCards.length > 0 && <section className="section"><div className="eyebrow">Full market catalogue</div><h2>{reviewCards.length} additional card products tracked</h2><p className="muted">These products are indexed from their official issuer catalogues. Their detailed rules are being normalised before they affect calculator rankings.</p><div className="grid">{reviewCards.map(card => <a key={card.id} className="card" href={card.sourceUrl} target="_blank" rel="noreferrer"><div className="tag">Rules in review</div><h3>{card.name}</h3><p className="muted">{card.bank}</p><span className="stat">Official source -&gt;</span></a>)}</div></section>}
   </main>;
 }
