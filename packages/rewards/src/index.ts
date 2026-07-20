@@ -16,7 +16,10 @@ export function recommend(cards: RewardCard[], offers: Offer[], tx: Transaction)
     const channelEligible = card.channel === "ANY" || card.channel === tx.channel;
     if (!categoryEligible) notes.push(`Not eligible for ${tx.category.toLowerCase()} purchases.`);
     if (!channelEligible) notes.push(`Only earns for ${card.channel.toLowerCase()} purchases.`);
-    const remainingCap = card.monthlyCap == null ? Infinity : Math.max(0, card.monthlyCap - (tx.currentMonthlySpend ?? 0));
+    // Current monthly spend is used to check a card's minimum-spend threshold.
+    // It is not necessarily spend in the capped reward category, so it must not
+    // be treated as previously consumed reward-cap spend.
+    const remainingCap = card.monthlyCap == null ? Infinity : card.monthlyCap;
     const eligibleAmount = Math.min(tx.amount, remainingCap);
     if (eligibleAmount <= 0) notes.push("Monthly reward cap is already used.");
     const offer = offers.find(o => o.cardIds.includes(card.id) && o.merchant.toLowerCase() === tx.merchant?.toLowerCase() && new Date(o.validTo) >= new Date());
