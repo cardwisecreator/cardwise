@@ -14,8 +14,9 @@ const palettes: Record<string, string> = {
   "DCS Card Centre": "linear-gradient(135deg,#182936,#5a8da1)",
 };
 
-export function CardVisual({ bank, name }: { bank: string; name: string }) {
+export function CardVisual({ bank, name, imageUrl }: { bank: string; name: string; imageUrl?: string | null }) {
   const initials = bank.split(" ").map(word => word[0]).join("").slice(0, 3).toUpperCase();
+  if (imageUrl) return <div className="cardVisual cardVisualImage" aria-label={`${name} official card image`}><img src={imageUrl} alt={`${name} from ${bank}`}/></div>;
   return <div className="cardVisual" style={{ background: palettes[bank] ?? "linear-gradient(135deg,#10201d,#4a685e)" }} aria-label={`${name} card visual`}>
     <span className="cardVisualBank">{initials}</span><span className="cardVisualChip"/><span className="cardVisualName">{name.replace(`${bank} ` , "").slice(0, 24)}</span><span className="cardVisualNetwork">SINGAPORE</span>
   </div>;

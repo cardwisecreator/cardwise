@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   try {
     const [cards, underReview] = await Promise.all([
       db.card.findMany({ where: { status: "PUBLISHED" } }),
-      db.card.findMany({ where: { status: "REVIEW" }, select: { id: true, name: true, bank: true, sourceUrl: true, lastUpdated: true } }),
+      db.card.findMany({ where: { status: "REVIEW" }, select: { id: true, name: true, bank: true, imageUrl: true, sourceUrl: true, lastUpdated: true } }),
     ]);
     // A promotion should enrich a recommendation, never prevent the core calculator from working.
     const offers = await db.offer.findMany({ where: { status: "PUBLISHED" } }).catch((error) => {

@@ -37,13 +37,13 @@ export default async function Cards() {
       <h2>Reviewed card rules ({cards.length})</h2>
       <p className="muted">Only these cards enter calculator results, so unverified reward rates never affect a recommendation.</p>
       <div className="grid">{cards.map(card => <Link key={card.id} className="card" href={`/cards/${card.slug}`}>
-        <CardVisual bank={card.bank} name={card.name}/>
+        <CardVisual bank={card.bank} name={card.name} imageUrl={card.imageUrl}/>
         <div className="tag">{card.bank}</div>
         <h3>{card.name}</h3>
         <p className="muted">{card.earnRate}{card.rewardType === "CASHBACK" ? "%" : "x"} {card.rewardType.toLowerCase()} earn rate</p>
         <div className="stats"><span className="stat">Min spend S${card.minimumSpend}</span>{card.monthlyCap && <span className="stat">Cap S${card.monthlyCap}</span>}</div>
       </Link>)}</div>
     </section>
-    {reviewCards.length > 0 && <section className="section"><div className="eyebrow">Full market catalogue</div><h2>{reviewCards.length} additional card products tracked</h2><p className="muted">These products are indexed from their official issuer catalogues. Their detailed rules are being normalised before they affect calculator rankings.</p><div className="grid">{reviewCards.map(card => <a key={card.id} className="card" href={card.sourceUrl} target="_blank" rel="noreferrer"><CardVisual bank={card.bank} name={card.name}/><div className="tag">Rules in review</div><h3>{card.name}</h3><p className="muted">{card.bank}</p><span className="stat">Official source -&gt;</span></a>)}</div></section>}
+    {reviewCards.length > 0 && <section className="section"><div className="eyebrow">Full market catalogue</div><h2>{reviewCards.length} additional card products tracked</h2><p className="muted">These products are indexed from their official issuer catalogues. Their detailed rules are being normalised before they affect calculator rankings.</p><div className="grid">{reviewCards.map(card => <a key={card.id} className="card" href={card.sourceUrl} target="_blank" rel="noreferrer"><CardVisual bank={card.bank} name={card.name} imageUrl={card.imageUrl}/><div className="tag">Rules in review</div><h3>{card.name}</h3><p className="muted">{card.bank}</p><span className="stat">Official source -&gt;</span></a>)}</div></section>}
   </main>;
 }

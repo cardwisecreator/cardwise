@@ -16,7 +16,7 @@ export type RewardRule = {
   notes?: string[];
 };
 
-export type RewardCard = { id: string; name: string; bank: string; rewardType: "CASHBACK" | "MILES" | "POINTS"; earnRate: number; minimumSpend: number; monthlyCap?: number | null; annualFee: number; eligibleCategories: string[]; channel: Channel; exclusions: string[]; sourceUrl: string; lastUpdated: string | Date; rewardRules?: RewardRule[] | null };
+export type RewardCard = { id: string; name: string; bank: string; rewardType: "CASHBACK" | "MILES" | "POINTS"; earnRate: number; minimumSpend: number; monthlyCap?: number | null; annualFee: number; eligibleCategories: string[]; channel: Channel; exclusions: string[]; imageUrl?: string | null; sourceUrl: string; lastUpdated: string | Date; rewardRules?: RewardRule[] | null };
 export type Offer = { id: string; merchant: string; title: string; discountPct?: number | null; cashbackPct?: number | null; validTo: string | Date; cardIds: string[]; minSpend?: number | null; sourceUrl: string };
 export type Transaction = { amount: number; category: string; merchant?: string; channel: Exclude<Channel, "ANY">; preference: Preference; currentMonthlySpend?: number };
 export type Recommendation = { card: RewardCard; value: number; reward: string; score: number; notes: string[]; eligible: boolean; monthlySpendGap: number; offer?: Offer; appliedRule?: string };
