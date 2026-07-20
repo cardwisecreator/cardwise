@@ -6,6 +6,7 @@ export type RewardRule = {
   rewardType: "CASHBACK" | "MILES" | "POINTS";
   earnRate: number;
   categories: string[];
+  merchants?: string[];
   channel?: Channel;
   minimumSpend?: number;
   maximumSpend?: number;
@@ -28,7 +29,7 @@ function selectRule(card: RewardCard, tx: Transaction) {
   const spend = tx.currentMonthlySpend ?? 0;
   const rules = card.rewardRules?.length ? card.rewardRules : [{ label: "Standard earn rate", rewardType: card.rewardType, earnRate: card.earnRate, categories: card.eligibleCategories, channel: card.channel, minimumSpend: card.minimumSpend, monthlyCap: card.monthlyCap }];
   return rules
-    .filter(rule => categoryMatches(rule.categories, tx.category) && channelMatches(rule.channel, tx.channel) && spend >= (rule.minimumSpend ?? 0) && (rule.maximumSpend == null || spend <= rule.maximumSpend))
+    .filter(rule => categoryMatches(rule.categories, tx.category) && channelMatches(rule.channel, tx.channel) && (!rule.merchants?.length || Boolean(tx.merchant && rule.merchants.some(merchant => merchant.toLowerCase() === tx.merchant!.toLowerCase()))) && spend >= (rule.minimumSpend ?? 0) && (rule.maximumSpend == null || spend <= rule.maximumSpend))
     .sort((a, b) => b.earnRate - a.earnRate)[0];
 }
 
