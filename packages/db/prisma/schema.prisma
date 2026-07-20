@@ -34,6 +34,7 @@ model Card {
  eligibleCategories String[]
  channel Channel @default(ANY)
  exclusions String[]
+ rewardRules Json?
  sourceUrl String
  lastUpdated DateTime @default(now())
  status PublishStatus @default(DRAFT)

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { recommend } from "@perklah/rewards";
+import { recommend, type RewardRule } from "@perklah/rewards";
 import { signedIn } from "@/lib/session";
 
 const input = z.object({
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
       return [];
     });
     return NextResponse.json({
-      recommendations: recommend(cards, offers, parsed.data),
+      recommendations: recommend(cards.map(card => ({ ...card, rewardRules: Array.isArray(card.rewardRules) ? card.rewardRules as unknown as RewardRule[] : [] })), offers, parsed.data),
       underReview,
       disclaimer: "Estimate only. Verify current issuer terms and MCC eligibility.",
     });
