@@ -10,6 +10,7 @@ export type RewardRule = {
   minimumSpend?: number;
   maximumSpend?: number;
   monthlyCap?: number | null;
+  capType?: "REWARD" | "SPEND";
   requiresCardholderChoice?: boolean;
   notes?: string[];
 };
@@ -46,18 +47,19 @@ export function recommend(cards: RewardCard[], offers: Offer[], tx: Transaction)
     if (!channelEligible) notes.push(`No verified ${tx.channel.toLowerCase()} rule applies to this purchase.`);
 
     const rule = applicableRule ?? { label: "Standard earn rate", rewardType: card.rewardType, earnRate: card.earnRate, monthlyCap: card.monthlyCap, requiresCardholderChoice: false };
-    const remainingCap = rule.monthlyCap == null ? Infinity : rule.monthlyCap;
-    const eligibleAmount = Math.min(tx.amount, remainingCap);
+    const capType = rule.capType ?? "SPEND";
+    const eligibleAmount = capType === "SPEND" && rule.monthlyCap != null ? Math.min(tx.amount, rule.monthlyCap) : tx.amount;
     const eligible = categoryEligible && channelEligible && monthlySpendGap === 0 && eligibleAmount > 0;
     const offer = offers.find(o => o.cardIds.includes(card.id) && o.merchant.toLowerCase() === tx.merchant?.toLowerCase() && new Date(o.validTo) >= new Date());
-    const baseValue = eligible ? eligibleAmount * rule.earnRate / 100 : 0;
+    const uncappedBaseValue = eligible ? eligibleAmount * rule.earnRate / 100 : 0;
+    const baseValue = capType === "REWARD" && rule.monthlyCap != null ? Math.min(uncappedBaseValue, rule.monthlyCap) : uncappedBaseValue;
     const promoValue = offer ? tx.amount * ((offer.discountPct ?? 0) + (offer.cashbackPct ?? 0)) / 100 : 0;
     const value = baseValue + promoValue;
     const reward = rule.rewardType === "MILES" ? `${Math.round(eligibleAmount * rule.earnRate)} miles` : rule.rewardType === "POINTS" ? `${Math.round(eligibleAmount * rule.earnRate)} points` : `S$${baseValue.toFixed(2)} cashback`;
 
     notes.unshift(`Applied rule: ${rule.label}.`);
     if (rule.requiresCardholderChoice) notes.push("This rate applies only if you selected this category in your card settings.");
-    if (rule.monthlyCap != null) notes.push(`Reward cap: S$${rule.monthlyCap}/month; S$${eligibleAmount.toFixed(2)} eligible for this transaction.`);
+    if (rule.monthlyCap != null) notes.push(capType === "REWARD" ? `Reward cap: S$${rule.monthlyCap}/month.` : `Eligible-spend cap: S$${rule.monthlyCap}/month; S$${eligibleAmount.toFixed(2)} eligible for this transaction.`);
     rule.notes?.forEach(note => notes.push(note));
     if (offer) notes.unshift(`${offer.title} adds S$${promoValue.toFixed(2)} estimated value.`);
     const preferenceBoost = tx.preference === "BEST" || tx.preference === rule.rewardType ? 1000 : 0;
