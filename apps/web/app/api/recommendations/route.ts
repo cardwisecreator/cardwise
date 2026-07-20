@@ -20,7 +20,10 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) return NextResponse.json({ error: "Invalid purchase details" }, { status: 400 });
 
   try {
-    const cards = await db.card.findMany({ where: { status: "PUBLISHED" } });
+    const [cards, underReview] = await Promise.all([
+      db.card.findMany({ where: { status: "PUBLISHED" } }),
+      db.card.findMany({ where: { status: "REVIEW" }, select: { id: true, name: true, bank: true, sourceUrl: true, lastUpdated: true } }),
+    ]);
     // A promotion should enrich a recommendation, never prevent the core calculator from working.
     const offers = await db.offer.findMany({ where: { status: "PUBLISHED" } }).catch((error) => {
       console.error("Unable to load merchant offers", error);
@@ -28,6 +31,7 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json({
       recommendations: recommend(cards, offers, parsed.data),
+      underReview,
       disclaimer: "Estimate only. Verify current issuer terms and MCC eligibility.",
     });
   } catch (error) {
